@@ -1,5 +1,7 @@
 name: Labeler
 
+# pull_request_target is used only for metadata labeling of fork PRs.
+# Do not check out or execute untrusted PR code in this privileged context.
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
@@ -10,14 +12,10 @@ permissions:
 
 jobs:
   label:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
     steps:
-      - uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: "2729701"
-          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-      - uses: actions/labeler@v5
+      - uses: actions/labeler@8558fd74291d67161a8a78ce36a881fa63b766a9 # v5 commit SHA
         with:
           configuration-path: .github/labeler.yml
-          repo-token: ${{ steps.app-token.outputs.token }}
+          repo-token: ${{ github.token }}
